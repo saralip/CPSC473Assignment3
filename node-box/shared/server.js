@@ -1,6 +1,5 @@
-
-var express = require("express"),
-        http = require("http"), app;
+var express = require('express'),
+        http = require('http'), app;
 var bodyParser = require('body-parser');
 //var urlencodedParser = bodyParser.urlencoded();
 
@@ -9,190 +8,160 @@ var bodyParser = require('body-parser');
 // // and have it listen on port 3000
 app = express();
 http.createServer(app).listen(3000);
+console.log('Server is listening on port 3000'); 
 
-//do I need this?
-//app.use(bodyParser());
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(express.static(__dirname + '/client'));
+app.use(bodyParser.urlencoded({'extended': true}));
 app.use(bodyParser.json());
-app.use(express.static(__dirname));
-
-
-var params = {};
 
 
 //returns average
-var average = function(nums)
-{
-	var total = 0, i;
-	for(i=0; i < nums.length; i++)
-	{
-		total += Number(nums[i]);
-	}
-	var avg = total/nums.length;
+var average = function(nums) {
+	var sumTotal = 0;
+	
+	nums.forEach(function(value) {
+		sumTotal = sumTotal + value; 
+	}); 
 
-	return avg;
+	return sumTotal/nums.length;
 };
-app.get("/average/:array", function (req, res)
-{
-	//res.send("Is this thing on??");
-	//var res = array.split(",");
-	//console.log(array);
-	var array = req.params.array.split(',');
-	console.log(array);
-	//console.log(req.body);
-	var result = average(array);
-	console.log(result);
-	return res.json({answer: result});
 
+app.post('/average', function (req, res)
+{
+	var nums = [];
+
+	req.body.nums.forEach(function(value) {
+		nums.push(Number(value));
+	});
+
+	console.log(req.body.nums, average(nums));
+	
+	res.json({'result1': average(nums)});
 });
 
 //returns the maximum value
-var maximum = function(nums)
-{
-	var max = nums[0], i;
-	for(i=1; i < nums.length; i++)
-	{
-		if(max<Number(nums[i]))
-		{
-			max = Number(nums[i]);
-		}
-	}
+var maximum = function(nums) {
+	var largest = nums[0]; 
 
-	return max;
+	nums.forEach(function(value) {
+		if (value > largest) {
+			largest = value; 
+		}}); 
+
+	return largest;
 };
-app.get("/maximum/:array", function (req, res)
-{
-	//res.send("Is this thing on??");
-	//var res = array.split(",");
-	//console.log(array);
-	var array = req.params.array.split(',');
-	console.log(array);
-	//console.log(req.body);
-	var result = maximum(array);
-	console.log(result);
-	return res.json({answer: result});
 
+app.post('/maximum', function (req, res)
+{
+	var nums = [];
+
+	req.body.nums.forEach(function(value) {
+		nums.push(Number(value));
+	});
+
+	console.log(req.body.nums, maximum(nums));
+	
+	res.json({'result2': maximum(nums)});
 });
+
 //returns true if array contains at least one even number
-var anyEven = function(nums)
-{
-	var i=0;
+var anyEven = function(nums) {
+	var anEven = false; 
 
-	for(i; i < nums.length; i++)
-	{
-		if(Number(nums[i])%2==0)
-		{
-			return true;
+	nums.forEach(function(value) {
+		if (value%2 === 0) {
+			anEven = true; 
 		}
-	}
+	});
 
-	return false;
+	return anEven;    
 };
-app.get("/anyEven/:array", function (req, res)
-{
-	//res.send("Is this thing on??");
-	//var res = array.split(",");
-	//console.log(array);
-	var array = req.params.array.split(',');
-	console.log(array);
-	//console.log(req.body);
-	var result = anyEven(array);
-	console.log(result);
-	return res.json({answer: result});
 
+app.post('/anyEven', function (req, res)
+{
+	var nums = [];
+	req.body.nums.forEach(function(value) {
+		nums.push(Number(value));
+	});
+
+	console.log(nums);
+	
+	res.json({'result3': anyEven(nums)});
 });
+
 //returns true if array contains all even numbers
-var allEven = function(nums)
-{
-	var i=0;
+var allEven = function(nums) {
+	var allEven = true; 
 
-	for(i; i < nums.length; i++)
-	{
-		if(nums[i]%2!=0)
-		{
-			return false;
+	nums.forEach(function(value) {
+		if (value%2 !== 0) {
+			allEven = false; 
 		}
-	}
-
-	return true;
+	});
+	return allEven; 
 };
-app.get("/allEven/:array", function (req, res)
-{
-	//res.send("Is this thing on??");
-	//var res = array.split(",");
-	//console.log(array);
-	var array = req.params.array.split(',');
-	console.log(array);
-	//console.log(req.body);
-	var result = allEven(array);
-	console.log(result);
-	return res.json({answer: result});
 
+app.post('/allEven', function (req, res)
+{
+	var nums = [];
+	req.body.nums.forEach(function(value) {
+		nums.push(Number(value));
+	});
+
+	console.log(nums);
+	
+	res.json({'result4': allEven(nums)});
 });
+
 //returns true if array contains specified element
-var arrayContains = function(nums, element)
-{
-	var i=0;
+var arrayContains = function (x, y) {
+	var contains = false; 
 
-	for(i; i < nums.length; i++)
-	{
-		if(nums[i] == element)
-		{
-			return true;
+	x.forEach(function(word) {
+		if(word === y) {
+			contains = true;
 		}
-	}
-
-	return false;
+	});
+	return contains; 
 };
-app.get("/arrayContains/:array/:element", function (req, res)
+
+app.post('/arrayContains', function (req, res)
 {
-	//res.send("Is this thing on??");
-	//var res = array.split(",");
-	//console.log(array);
-	var array = req.params.array.split(',');
-	console.log(array);
-	//console.log(req.body);
-	var element = req.params.element;
+	var nums = req.body.nums; 
+	var value = req.body.value;
 
-	var result = arrayContains(array, element);
-	console.log(result);
-	return res.json({answer: result});
+	console.log(nums, value);
 
+	res.json({'result5': arrayContains(nums, value)});
 });
+
 //returns true if array contains specified element exists specified times(n) or more
-var arrayContainsNTimes = function(nums, element, n)
+var arrayContainsNTimes = function(nums, y, n)
 {
-	var i=0, count=0;
+	var contains = false,
+		count=0;
 
-	for(i; i < nums.length; i++)
-	{
-		if(Number(nums[i]) == Number(element))
-		{
-			count++;
+	nums.forEach(function(word) {
+		if(word === y) {
+			count++; 
+			if (count >= n) {
+				contains = true; 
+			}
 		}
-	}
-	if(count >= Number(n))
-	{
-		return true;
-	}
+	});
 
-	return false;
+	return contains; 
 };
-app.get("/arrayContainsNTimes/:array/:element/:n", function (req, res)
+
+app.post('/arrayContainsNTimes', function (req, res)
 {
-	//res.send("Is this thing on??");
-	//var res = array.split(",");
-	//console.log(array);
-	var array = req.params.array.split(',');
-	console.log(array);
-	//console.log(req.body);
-	var element = req.params.element;
-	var n = req.params.n;
+	var nums = req.body.nums; 
+	var value = req.body.value;
+	var counter = req.body.count;
 
-	var result = arrayContainsNTimes(array, element, n);
-	console.log(result);
-	return res.json({answer: result});
+	console.log(nums, value, counter);
 
+	res.json({'result6': arrayContainsNTimes(nums, value, counter)});
 });
 
 
